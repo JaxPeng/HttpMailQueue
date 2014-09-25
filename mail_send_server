@@ -82,9 +82,8 @@ def db_connect():
     cx.commit()
     return cx
 
-def process_mail_queue(pid_file, userconfig):
+def process_mail_queue(userconfig):
     pid = os.getpid()
-    open(pid_file, 'a+').write(str(pid)+'\n')
     print 'Start mail queue processer(pid=%s)' % pid
 
     cx = db_connect()
@@ -175,9 +174,8 @@ class InfoHandler(tornado.web.RequestHandler):
         self.set_header("Content-Type", "application/json")
         self.write(json.dumps(data))
 
-def start_http_server(pid_file, userconfig):
+def start_http_server(userconfig):
     pid = os.getpid()
-    open(pid_file, 'a+').write(str(pid)+'\n')
     print 'Start http server(pid=%s)' % pid
 
     application = tornado.web.Application([
@@ -201,8 +199,6 @@ def userconfig_parse(config_file):
 
 if __name__ == "__main__":
     
-    pid_file = '/tmp/mail_send.pid'
-
     arg = None
     arg1 = None
 
@@ -213,14 +209,7 @@ if __name__ == "__main__":
         pass
 
     if arg0 == 'stop' or arg1 == 'stop':
-        if os.path.exists(pid_file):
-            for line in open(pid_file, 'r'):
-                pid = line.replace('\n', '')
-                os.system("kill -9 %s" % pid)
-                print 'Process: %s killed' % pid
-            os.remove(pid_file)
-        else:
-            print 'Server is not running.'
+        os.system("ps x|grep mail_send_server|grep -v grep |awk '{print $1}'|xargs kill -9")
     else:
         config_file = None
         for arg in sys.argv:
@@ -238,15 +227,6 @@ if __name__ == "__main__":
             print ex
             sys.exit(1)
 
-        if os.path.exists(pid_file):
-            print 'Server is running.'
-            sys.exit(1)
-
-        try:
-            os.remove(pid_file)
-        except Exception, ex:
-            pass
-
         if 'daemon' in userconfig and userconfig['daemon'] == 'true':
             
             if 'log' in userconfig:
@@ -260,13 +240,11 @@ if __name__ == "__main__":
 
             daemon(stdout=stdout, stderr=stderr)
 
-        pid = os.getpid()
-        open(pid_file, 'a+').write(str(pid)+'\n')
 
-        p = Process(target=start_http_server, args=(pid_file, userconfig))
+        p = Process(target=start_http_server, args=(userconfig,))
         p.start()
         
-        p2 = Process(target=process_mail_queue, args=(pid_file, userconfig))
+        p2 = Process(target=process_mail_queue, args=(userconfig,))
         p2.start()
 
         p.join()
