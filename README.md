@@ -1,7 +1,11 @@
 HttpMailQueue
 =============
 
-邮件发送队列
+requirements
+
+python 2.6+
+tornado
+
 
 使用方法
 
