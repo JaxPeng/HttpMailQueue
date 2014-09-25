@@ -1,0 +1,4 @@
+HttpMailQueue
+=============
+
+HTTP mail queue
