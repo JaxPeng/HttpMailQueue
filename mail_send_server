@@ -13,7 +13,7 @@ import time
 import json
 import random
 import sqlite3
-import smtplib,sys 
+import smtplib
 from email.mime.text import MIMEText
 
 import tornado.ioloop
