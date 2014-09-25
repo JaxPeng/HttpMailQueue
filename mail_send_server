@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #encoding=UTF8
-#code by LP
-#2013-8-21
+#code by Jax
+#2014-9-23
 
 '''
-守护进程
+Mail queue
 '''
 
 import sys 
@@ -53,28 +53,19 @@ def daemon(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
 
 
 def send_mail(email,sub,content, userconfig): 
-#############
-#要发给谁，这里发给1个人
-    mailto_list=[email] 
-#####################
-#设置服务器，用户名、口令以及邮箱的后缀
+    
+	mailto_list=[email] 
     smtp_host=userconfig['smtp_host']
     smtp_user=userconfig['smtp_user']
     smtp_password=userconfig['smtp_password']
-######################
-    '''''
-    to_list:发给谁
-    sub:主题
-    content:内容
-    send_mail("aaa@126.com","sub","content")
-    '''
     me = userconfig['mail_sender']+"<"+smtp_user+">"
     msg = MIMEText(content,'html') 
     msg.set_charset('utf-8')
     msg['Subject'] = sub 
     msg['From'] = me 
     msg['To'] = ";".join(mailto_list) 
-    try:
+    
+	try:
         s = smtplib.SMTP() 
         s.connect(smtp_host) 
         s.login(smtp_user,smtp_password) 
@@ -83,10 +74,6 @@ def send_mail(email,sub,content, userconfig):
         return 'OK'
     except Exception, e: 
         return str(e)
-
-
-
-#send_mail('343015329@qq.com', 'test', '<a href="http://baidu.com">百度</a>');
 
 def db_connect():
     cx = sqlite3.connect("mail_queue.db")
