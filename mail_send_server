@@ -21,6 +21,8 @@ import tornado.web
 
 from multiprocessing import Process
  
+DB_PATH='./mail_queue.db'
+
 def daemon(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'): 
     try: 
         pid = os.fork() 
@@ -76,7 +78,7 @@ def send_mail(email,sub,content, userconfig):
         return str(e)
 
 def db_connect():
-    cx = sqlite3.connect("mail_queue.db")
+    cx = sqlite3.connect(DB_PATH)
     cu=cx.cursor()
     cu.execute("CREATE TABLE IF NOT EXISTS mail_list ([mail_id] INTEGER PRIMARY KEY, [receiver] TEXT, [status] INTEGER, [info] TEXT, [title] TEXT, [content] TEXT)")
     cx.commit()
@@ -223,6 +225,7 @@ if __name__ == "__main__":
         userconfig = None
         try:
             userconfig = userconfig_parse(config_file)
+            DB_PATH = userconfig['db_path']
         except Exception, ex:
             print ex
             sys.exit(1)
