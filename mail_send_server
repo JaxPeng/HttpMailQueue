@@ -54,7 +54,7 @@ def daemon(stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
 
 def send_mail(email,sub,content, userconfig): 
     
-	mailto_list=[email] 
+    mailto_list=[email] 
     smtp_host=userconfig['smtp_host']
     smtp_user=userconfig['smtp_user']
     smtp_password=userconfig['smtp_password']
@@ -65,7 +65,7 @@ def send_mail(email,sub,content, userconfig):
     msg['From'] = me 
     msg['To'] = ";".join(mailto_list) 
     
-	try:
+    try:
         s = smtplib.SMTP() 
         s.connect(smtp_host) 
         s.login(smtp_user,smtp_password) 
