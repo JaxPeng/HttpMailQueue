@@ -225,7 +225,8 @@ if __name__ == "__main__":
         userconfig = None
         try:
             userconfig = userconfig_parse(config_file)
-            DB_PATH = userconfig['db_path']
+            if 'db_path' in userconfig:
+                DB_PATH = userconfig['db_path']
         except Exception, ex:
             print ex
             sys.exit(1)
