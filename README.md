@@ -6,8 +6,7 @@ HttpMailQueue
 使用方法
 
 1.启动
-chmod +x ./mail_send_server
-./mail_send_server mailsend.conf
+chmod +x ./mail_send_server && ./mail_send_server mailsend.conf
 
 2.停止
 ./mail_send_server stop
